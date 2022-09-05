@@ -71,8 +71,9 @@ ArcDb implements snapshot semantics by a kind of MVCC, but applied to database f
 WALs are merged into the Main file by a maintenance process. WALs can only be merged if they are valid and if all Read Transactions previous to that WAL have completed.
 
 Side effects:
-- A long-running Read Transaction can severely impact system performance. The behaviour will always be *correct*, but disk space usage will grow significantly since the old state of the database must be retained.
-- Smaller Write Transactions are better. Specifically, when bulk loading records into a database that is concurrently being read from, you should break the bulk loading into groups of records, if possible.
+- Prefer short-running Read Transactions (in terms of time) and smaller Write Transactions (in terms of space).
+  - A long-running Read Transaction can severely impact system performance. The behaviour will always be *correct*, but disk space usage will grow significantly since the old state of the database must be retained.
+  - Smaller Write Transactions are better. Specifically, when bulk loading records into a database that is concurrently being read from, you should break the bulk loading into groups of records, if possible.
 - ArcDb gives strong guarantees (Serializable Writes and Snapshot Reads) and avoids common problems (Transaction Deadlocks, Phantom Reads, etc), but this comes at the cost of *disk space*. A busy ArcDb system will need sufficient temporary space for its WALs.
 
 This is similar to copy-on-write implementations, but with ArcDb the copies always go into the WAL instead of the Main database file.
