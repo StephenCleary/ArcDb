@@ -16,6 +16,7 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
 - Support concurrency as much possible.
 - Fully asynchronous from the ground up.
 - Streaming result sets.
+- Prefer reliability over performance. I.e., validate all reads from disk. More expensive reliability checks (e.g., structure validation) should be done opportunistically (e.g., during backups), but should not cause I/O beyond what would otherwise be done.
 
 ## Non-Goals
 
@@ -35,7 +36,7 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
 - Main: The primary database file.
 - Database: The primary database file logically combined with all valid WALs. This represents the current state of the database.
 - Metadata: The portion of the database dedicated to storing database metadata, including the database header as well as structures for tracking page and folio usage.
-- Folio: A contiguous block in the database (Main or WAL). Folios are either metadata or pages.
+- Folio: A contiguous block in the database (Main or WAL). Folios are the unit of read/write operations. Folios are either metadata or pages.
 - Page: A folio that represents data rather than metadata. Pages (a.k.a. Data Pages) contain the relational database structures such as indexes, as well as end-user records.
 
 ## Technology
