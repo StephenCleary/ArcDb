@@ -68,7 +68,7 @@ ArcDb implements snapshot semantics by a kind of MVCC, but applied to database f
 - If the Write Transaction is rolled back, its WAL is simply deleted.
 - If the Write Transaction is committed, then its WAL is made valid. This action atomically includes the new valid WAL in the database. Future Read and Write Transactions will use the new state of the database, including this now-valid WAL.
 
-WALs are merged into the Main file by a system process. WALs can only be merged if they are valid and if all Read Transactions previous to that WAL have completed.
+WALs are merged into the Main file by a maintenance process. WALs can only be merged if they are valid and if all Read Transactions previous to that WAL have completed.
 
 Side effects:
 - A long-running Read Transaction can severely impact system performance. The behaviour will always be *correct*, but disk space usage will grow significantly since the old state of the database must be retained.
