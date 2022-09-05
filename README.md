@@ -76,4 +76,6 @@ Side effects:
   - Smaller Write Transactions are better. Specifically, when bulk loading records into a database that is concurrently being read from, you should break the bulk loading into groups of records, if possible.
 - ArcDb gives strong guarantees (Serializable Writes and Snapshot Reads) and avoids common problems (Transaction Deadlocks, Phantom Reads, etc), but this comes at the cost of *disk space*. A busy ArcDb system will need sufficient temporary space for its WALs.
 
-This is similar to copy-on-write implementations, but with ArcDb the copies always go into the WAL instead of the Main database file.
+This is similar to copy-on-write implementations, but with ArcDb the copies always go into the WAL instead of the Main database file. It's also similar to multicomponent LSM trees and how they depend on compaction, but ArcDb uses B-trees instead of LSM trees; ArcDb does use WAL-scoped bloom filters in the same way as LSMs.
+
+Using copy-on-write B-trees with WALs while insisting on full transaction isolation has an interesing result: ArcDb completely fails the RUM conjecture. Mutable B-Trees optimize for reads; immutable LSMs optimize for writes; and relaxing isolation optimizes for memory. ArcDb optimizes for none of these. As such, it *may* be useful as a performance baseline for database systems that do optimize for one of those concerns.
