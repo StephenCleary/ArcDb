@@ -22,7 +22,7 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
 
 - SQL. ArcDb is a relational database, but does not support SQL in any form.
   - ArcDb will expose an API based on relational algebra; SQL is a form of relational calculus. The two are equivalent in terms of expressive power.
-- Relaxing isolation. E.g., only Serializable transactions are supported; Repeatable Read, Read Committed, and Read Uncommitted are not supported.
+- Relaxing isolation. Only Serializable transactions are supported; Repeatable Read, Read Committed, and Read Uncommitted are not supported.
 - Relaxing durability. E.g., choosing to flush to disk less often than is required for full durability.
 
 ## Terminology
