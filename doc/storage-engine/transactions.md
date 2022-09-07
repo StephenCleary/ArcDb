@@ -34,7 +34,7 @@ TODO: As each folio is written, we can request an OS write at that time, cancell
 
 Write Transaction folio mappings are buffered in memory, and written out to the [TOC in the WAL metadata](./file-formats/wal.md) when the transaction is committed.
 
-TODO: It's possible to *stall* instead of *fail* when the disk is full, if writing to a WAL file. Should we? Or just fail-fast instead? A disk full error when extending the Main file would always be an error.
+If there is a disk-full error when writing to a WAL file, the transaction is rolled back.
 
 ### Reads
 
