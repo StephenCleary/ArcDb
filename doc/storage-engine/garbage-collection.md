@@ -25,5 +25,3 @@ TODO: Perhaps a GC should *always* be either a "quick trim" or a "move page(s)" 
 Note: The GC can never run again immediately; the Lazy Writer must merge the GC before it can trigger again.
 
 Note: Just like any other Write Transaction, the GC Write Transaction may include a Metadata Expansion.
-
-TODO: It's possible to mark GCs as a special kind of Maintenance Write Transaction that cannot possibly interfere with most Read Transactions. This would complicate the transaction processing quite a bit, though. The benefit of that approach is that when merging a Maintenance Write Transaction, the Lazy Writer could "promote" Read Transaction Versions to include the Maintenance Write Transaction Version; this means Maintenance writes wouldn't have to wait for Read Transactions to Merge. But the special Maintenance Read Transactions used by Backup and Validate would not be eligible for promotion. And promotion would have to be atomic w.r.t. whatever the Read Transaction is doing.
