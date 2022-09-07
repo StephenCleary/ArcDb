@@ -95,3 +95,11 @@ Using copy-on-write B-trees with WALs while insisting on full transaction isolat
 - Folio Offsets (FO) are 32-bit numbers that are folio-sized. This results in a maximum Database size of 4294967296 * 8192 = 35184372088832 bytes, or 32 TB.
   - This is an acceptable limitation for an embedded relational database.
   - The actual amount of user data stored will be less, due to metadata and relational structure overheads.
+
+## Comparison with SQLite
+
+SQLite is currently the most common embedded relational database. ArcDb has several design differences with the out-of-the-box SQLite experience:
+
+- Static typing instead of dynamic typing.
+- Foreign keys are always enforced.
+- No manual/periodic vacuuming or other maintenance tasks are necessary.
