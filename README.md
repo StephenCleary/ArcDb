@@ -1,6 +1,6 @@
 # ArcDb
 
-An ACID .NET relational database.
+An ACID .NET relational database. More specifically, ArcDb is a disk-based, row-oriented OLTP storage engine.
 
 ## Goals
 
@@ -36,21 +36,21 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
 
 ## Terminology
 
-- Read Transaction: A transaction that has a read-only view of the database. All Read Transactions use snapshot semantics.
-- Write Transaction: A transaction that can modify the database. All Write Transactions use serializable semantics.
+- [Read Transaction](./doc/storage-engine/transactions.md#read-transactions): A transaction that has a read-only view of the database. All Read Transactions use snapshot semantics.
+- [Write Transaction](./doc/storage-engine/transactions.md#write-transactions): A transaction that can modify the database. All Write Transactions use serializable semantics.
   - ArcDb is implemented as a single-writer system (technically, single-writer-at-a-time system).
   - Every Write Transaction that actually updates the database has exactly one WAL (write-ahead log). Write Transactions that never write do not have a WAL.
-- WAL: A write-ahead log *for a specific Write Transaction*.
+- [WAL](./doc/storage-engine/file-formats/wal.md): A write-ahead log *for a specific Write Transaction*.
   - WALs may be valid (representing a committed transaction) or invalid (representing a rolled back or in-progress transaction). Only Write Transactions have WALs.
 - Main: The primary database file.
-- Database: The primary database file logically combined with all valid WALs. This represents the current state of the database.
+- [Database](./doc/storage-engine/file-formats/database.md): The primary database file logically combined with all valid WALs. This represents the current state of the database.
 - Metadata: The portion of the database dedicated to storing database metadata, including the database header as well as structures for tracking page and folio usage.
-- Folio: A contiguous block in the database (Main or WAL). Folios are the unit of read/write operations. Folios are either metadata or pages.
+- [Folio](./doc/storage-engine/file-formats/folios.md): A contiguous block in the database (Main or WAL). Folios are the unit of read/write operations. Folios are either metadata or pages.
 - Page: A folio that represents data rather than metadata. Pages (a.k.a. Data Pages) contain the relational database structures such as indexes, as well as end-user records.
 
 ## Technology
 
-See the docs folder for details. To summarize:
+See the [docs folder](./doc/) for details. To summarize:
 
 ### Transactions
 
@@ -70,14 +70,14 @@ See the docs folder for details. To summarize:
 
 ArcDb implements snapshot semantics by a kind of MVCC, but applied to database folios rather than end-user records:
 
-- All Write Transactions write to a WAL. No part of the database is ever updated in-place. The WAL may be updated in-place since it is not considered part of the database until it is valid (committed).
+- All Write Transactions write to a [WAL](./doc/storage-engine/file-formats/wal.md). No part of the database is ever updated in-place. The WAL may be updated in-place since it is [not considered part of the database](./doc/storage-engine/file-formats/database.md) until it is valid (committed).
 - ArcDb is a single-writer system (technically, one-at-a-time writer). At all times, there must be either zero or one invalid (uncommitted) WALs.
 - The WAL contains updates of the database, including both metadata and data. WALs are stored as folio updates.
 - During the Write Transaction, Read Transactions may access the database freely.
 - If the Write Transaction is rolled back, its WAL is simply deleted.
 - If the Write Transaction is committed, then its WAL is made valid. This action atomically includes the new valid WAL in the database. Future Read and Write Transactions will use the new state of the database, including this now-valid WAL.
 
-WALs are merged into the Main file by a maintenance process. WALs can only be merged if they are valid and if all Read Transactions previous to that WAL have completed.
+WALs are [merged into the Main file by a maintenance process](./doc/storage-engine/lazy-writer.md). WALs can only be merged if they are valid and if all Read Transactions previous to that WAL have completed.
 
 Side effects:
 - Prefer short-running Read Transactions (in terms of time) and smaller Write Transactions (in terms of space).
