@@ -65,7 +65,7 @@ The Storage Engine API always accesses pages in terms of Logical Page Numbers. T
 
 Nothing above the Storage Engine has any concept of Folios or metadata (except the reserved section in the database header). However, the Backup and Validate operations do operate on Folios.
 
-TODO: Determine if LPNs are 32-bit integers (requires some awkward logic when allocating a new one) or 64-bit integers (has higher storage costs for LPN-FO and FO-LPN mappings).
+LPNs are 64-bit unsigned integers.
 
 # Fail-Fast
 
