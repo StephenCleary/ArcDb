@@ -2,7 +2,7 @@
 
 There is one actual file per WAL.
 
-Each WAL is a sequence of one or more folios that are updates to database folios or new database folios, and the WAL ends with a sequence of at least one WAL metadata folio.
+Each WAL is a sequence of one or more [folios](./folios.md) that are updates to database folios (or new appended database folios), and the WAL ends with a sequence of at least one WAL metadata folio.
 
 ## WAL Metadata
 
@@ -18,9 +18,9 @@ The TOC will exist within the footer folio if it can fit; otherwise, it is a B-t
 
 ## Footer
 
-The footer is the last folio of a WAL file. Due to the way WAL files are written, an invalid footer makes the WAL invalid, and a valid footer makes the WAL valid.
+The footer is the last folio of a WAL file. Due to [the way WAL files are written](../transactions.md#commitrollback), an invalid footer makes the WAL invalid, and a valid footer makes the WAL valid.
 
-The footer contains the number of database folios in the WAL file. It also contains the number of total database folios, as well as the number of WAL metadata folios.
+The footer contains the number of database folios in the WAL file. It also contains the number of WAL metadata folios preceding the footer.
 
 If the TOC fits within the footer, then the footer contains the TOC, and there are no other metadata folios.
 

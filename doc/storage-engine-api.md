@@ -13,7 +13,7 @@ A given storage engine provides these APIs as the entry point to its services:
 
 ## Read-Only Database APIs
 
-- Start Read Transaction: Starts a new Read Transaction and returns a disposable object that ends the transaction when disposed.
+- Start Read Transaction: Starts a new [Read Transaction](./transactions.md) and returns a disposable object that ends the transaction when disposed.
 - Backup: Perform a backup of this database to a new location. Backups are a special form of Read Transaction, and may run concurrently with Write Transactions without issue.
   - Some additional validation is performed during database backups.
 - Validate: Performs a full validation of the database. Like Backups, Validations are a special form of Read Transaction and do not block Write Transactions.
@@ -22,7 +22,7 @@ A given storage engine provides these APIs as the entry point to its services:
 
 In addition to the read-only database APIs:
 
-- Start Write Transaction: Starts a new Write Transaction and returns a disposable object that, when disposed, rolls back the transaction if it has not been committed.
+- Start Write Transaction: Starts a new [Write Transaction](./transactions.md) and returns a disposable object that, when disposed, rolls back the transaction if it has not been committed.
 
 ## Read Transaction APIs
 

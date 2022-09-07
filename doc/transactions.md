@@ -26,17 +26,17 @@ The current Write Transaction determines its Transaction Version by reading the 
 
 ### Writes
 
-All Write Transaction modifications - whether of data or metadata - are always done in a dedicated WAL file.
+All Write Transaction modifications - whether of data or metadata - are always done in a dedicated [WAL file](./file-formats/wal.md).
 
-The first updated folio also causes an update to the database header folio, updating the Database Version to the Write Transaction Version.
+The first updated [folio](./file-formats/folios.md) also causes an update to the [database header](./file-formats/database.md#database-header) folio, updating the Database Version to the Write Transaction Version.
 
-Write Transaction folio mappings are buffered in memory, and written out to the TOC in the WAL metadata when the transaction is committed.
+Write Transaction folio mappings are buffered in memory, and written out to the [TOC in the WAL metadata](./file-formats/wal.md) when the transaction is committed.
 
 TODO: It's possible to *stall* instead of *fail* when the disk is full, if writing to a WAL file. Should we? Or just fail-fast instead? A disk full error when extending the Main file would always be an error.
 
 ### Reads
 
-When reading pages, the Write Transaction maps Logical Page Numbers to Folios by using its own WAL first, then the list of valid WALs, and finally the Main file.
+When reading pages, the Write Transaction [maps](./mapping.md) Logical Page Numbers to Folios by using its own WAL first, then the list of valid WALs, and finally the Main file.
 
 ### Commit/Rollback
 
@@ -56,6 +56,8 @@ Once the transaction has been committed to disk, it is committed to memory:
 - The WAL file is added to the list of WAL files (including an in-memory copy of the WAL footer).
 - The in-memory Database Version is updated to this Write Transaction's Version.
 
+The Write Transaction is considered complete when the WAL footer has been flushed (and the in-memory commits are made). It does not have to wait for the [Lazy Writer](./lazy-writer.md) to merge the WAL into the Main database file.
+
 ### Notes
 
 Database Versions are unique only if you only consider committed transactions. They may be equal to previous Write Transaction Versions that were rolled back, or equal to a Read Transaction's Version.
@@ -70,8 +72,8 @@ Read Transactions add their Transaction Version to a global in-memory list of Re
 
 ### Reads
 
-When reading pages, the Read Transaction uses its Transaction Version to map Logical Page Numbers to Folios using all valid WALs and the Main file.
+When reading pages, the Read Transaction uses its Transaction Version to [map](./mapping.md) Logical Page Numbers to Folios using all valid WALs and the Main file.
 
 ### End
 
-When the Read Transaction ends, it removes itself from the global in-memory list of Read Transactions. This notifies the Lazy Writer to process the next WAL, if that action is applicable.
+When the Read Transaction ends, it removes itself from the global in-memory list of Read Transactions. This notifies the [Lazy Writer](./lazy-writer.md) to merge the next WAL, if that action is applicable.
