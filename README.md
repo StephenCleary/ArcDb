@@ -31,8 +31,8 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
 - Relaxing isolation. Only Serializable transactions are supported; Repeatable Read, Read Committed, and Read Uncommitted are not supported.
 - Relaxing durability. E.g., choosing to flush to disk less often than is required for full durability.
 - `NULL`. It constantly causes surprising behavior.
-  - Operations such as outer joins will require a user-supplied "null object value".
-  - TODO: Figure out how to represent self-referencing tables (e.g., `Employee.Boss` for the CEO record).
+  - Operations such as joins will require a user-supplied "null object value". This may be a literal C# `null`.
+  - Missing data is represented as an additional index.
 
 ### Sub-Goal: Avoiding Pitfalls
 
