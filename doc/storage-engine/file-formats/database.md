@@ -32,7 +32,7 @@ The database header folio includes these fields:
 
 ### LPN-FO (Logical Page Number -> Folio Offset)
 
-This is a B-Tree that maps Logical Page Numbers (LPNs) to Folio offsets (FO).
+This is a [B-Tree](./trees.md) that maps Logical Page Numbers (LPNs) to Folio offsets (FO).
 
 This map is read when reading a logical page; the page number is looked up in this map to get the folio offset of the page data.
 
@@ -42,7 +42,7 @@ This map is updated when moving a logical page from one folio to another.
 
 ### FO-LPN (Folio Offset -> Logical Page Number)
 
-This is a B-Tree that maps Folio offsets (used data pages) to Logical Page Numbers.
+This is a [B-Tree](./trees.md) that maps Folio offsets (used data pages) to Logical Page Numbers.
 
 This map is read when doing garbage collection or metadata expansion.
 - TODO: if we took more of the data header, we wouldn't need this for metadata expansion; can it be done away with completely?
@@ -53,7 +53,7 @@ This map is appended to and removed from when moving a logical page from one fol
 
 ### FP (Free Pages)
 
-This is a B-Tree without values; it is just a set of Folio offsets in the data section that are unused. Only data pages are represented in the FP set; free metadata pages are tracked via a freelist.
+This is a [B-Tree](./trees.md) without values; it is just a set of Folio offsets in the data section that are unused. Only data pages are represented in the FP set; free metadata pages are tracked via a freelist.
 
 This set is read when searching for a free page or when doing garbage collection.
 

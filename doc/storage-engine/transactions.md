@@ -30,6 +30,8 @@ All Write Transaction modifications - whether of data or metadata - are always d
 
 The first updated [folio](./file-formats/folios.md) also causes an update to the [database header](./file-formats/database.md#database-header) folio, updating the Database Version to the Write Transaction Version.
 
+TODO: As each folio is written, we can request an OS write at that time, cancelling any previous writes to that WAL file offset.
+
 Write Transaction folio mappings are buffered in memory, and written out to the [TOC in the WAL metadata](./file-formats/wal.md) when the transaction is committed.
 
 TODO: It's possible to *stall* instead of *fail* when the disk is full, if writing to a WAL file. Should we? Or just fail-fast instead? A disk full error when extending the Main file would always be an error.

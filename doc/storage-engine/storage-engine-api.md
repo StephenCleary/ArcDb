@@ -4,12 +4,18 @@ The Storage Engine API is the API divides the ArcDb storage engine from the ArcD
 
 The Storage Engine handles all the file formats and provides ACID guarantees. It provides Data Pages to the higher-level index engine.
 
+All APIs are asynchronous.
+
 ## Entry-Point APIs
 
 A given storage engine provides these APIs as the entry point to its services:
 
 - OpenOrCreate Database: Returns a read/write database object.
 - Open ReadOnly Database: Returns a read-only database object.
+
+The database is closed when it is disposed.
+
+TODO: Determine if we want to allow maintenance transactions to complete if closed asynchronously, e.g., GC. This would make asynchronous disposal work differently than synchronous disposal, though.
 
 ## Read-Only Database APIs
 

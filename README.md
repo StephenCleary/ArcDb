@@ -24,7 +24,7 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
   - Use code generation to provide strongly-typed APIs and also hooks for arbitrary checks.
   - Note: new code checks are not automatically run on existing data.
 
-## Non-Goals
+### Non-Goals
 
 - SQL. ArcDb is a relational database, but does not support SQL in any form.
   - ArcDb will expose an API based on relational algebra; SQL is a form of relational calculus. The two are equivalent in terms of expressive power.
@@ -33,6 +33,21 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
 - `NULL`. It constantly causes surprising behavior.
   - Operations such as outer joins will require a user-supplied "null object value".
   - TODO: Figure out how to represent self-referencing tables (e.g., `Employee.Boss` for the CEO record).
+
+### Sub-Goal: Avoiding Pitfalls
+
+There are some common pitfalls when working with databases which ArcDb is attempting to avoid. Hopefully we won't create our own common pitfalls along the way...
+
+- Missing indexes. Perhaps one of the most common problems with all SQL databases is that a query is slow because there's a missing index in the database, or because the query planner didn't choose to use the desired index for a reason that isn't immediately obvious. It isn't long before every SQL programmer has to learn how to debug their query optimizer in addition to their own code.
+  - ArcDb avoids this by making all index accesses explicit (relational algebra instead of relational calculus). The developer has to choose the index(es) to use. E.g., full table scans are *possible*, but they have to be explicit in the code, which also makes them *obvious*.
+- Unsafe defaults. Some database systems ship out of the box with unsafe default behavior, usually for performance reasons. E.g., some common databases do not enforce foreign keys by default; other less-common databases are not ACID by default due to relaxed durability.
+  - ArcDb chooses to be correct, even if it means being slower.
+- Hidden maintenance requirements. Some common database systems have regular maintenance required or they will grow without bound over time, even if the average data usage remains constant. This is often not mentioned in the "getting started" documentation, and is often not discovered until after the database is causing problems in production.
+  - ArcDb will not grow without bound over time for constant average data usage. Any required maintenance is included out of the box in an always-on state.
+- Copy/paste ACID relaxing. This usually takes the form of relaxed transaction isolation (e.g., copy/pasting Read Uncommitted / Read Committed / Repeatable Read) or relaxed SQL locks (e.g., copy/pasting `NOLOCK`). These are done as optimizations, but they relax the ACID requirements in a way that is not appropriate for most scenarios. Then this code gets copy/pasted everywhere as "the faster version", often causing subtle bugs since the developers assume ACID is enforced when it has actually been relaxed.
+  - ArcDb does not allow relaxing ACID. At all. If you want the fastest possible database at the expense of correctness, then this is not the solution for you.
+- Retries for deadlocks. Most database systems use locking, and even the best lock strategies have some scenarios that can cause deadlocks. In this case, the deadlock must be detected and one of the transactions must choose to be (or be chosen as) the deadlock "victim" and rollback so that the system as a whole can proceed. At the very least, this means developers need to catch aborted-due-to-deadlock exceptions and retry them, treating that specific kind of error as transient. This is often not mentioned in the "getting started" documentation, and is often not discovered until after the database is causing problems in production.
+  - ArcDb does not use any kinds of locks within its database. These kinds of deadlocks are not possible in ArcDb, so developers don't have to add code to handle them.
 
 ## Terminology
 

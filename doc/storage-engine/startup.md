@@ -19,3 +19,13 @@ If the steps above are complete and there are no WAL files and the Main database
 If there are any WAL files at all and the database is not in read-only mode, then the [Lazy Writer](./lazy-writer.md) is immediately started. There are no Read Transactions on a newly opened database, so the Lazy Writer will be able to treat *all* the WAL files as candidates for merging.
 
 Note: opening the database does not have to wait for the first WAL to complete. It is entirely possible that the Main database file is invalid at this point (due to an incomplete WAL merge), but that doesn't matter beause the mappings in the first WAL file include all folios in the Main file that may be invalid.
+
+## Schema Version
+
+Once the database is open, ArcDb checks the schema version. If it is a larger value than ArcDb recognizes, then the database open fails.
+
+## Automatic Upgrades
+
+Once the database is open, if the schema version is out of date, then the database is eligible for an upgrade.
+
+Users must *opt in* to automatic upgrades when opening the database, and may specify a maximum schema version when doing so. This is to ensure that different versions of user applications may access the same database file successfully.
