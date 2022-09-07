@@ -17,6 +17,12 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
 - Fully asynchronous from the ground up.
 - Streaming result sets.
 - Prefer reliability over performance. I.e., validate all reads from disk. More expensive reliability checks (e.g., structure validation) should be done opportunistically (e.g., during backups), but should not cause I/O beyond what would otherwise be done.
+- Do not require the end-user to do regular maintenance (i.e., "vacuuming").
+  - If large amounts of data are added and then removed, ArcDb must automatically reduce itself to a reasonable size (not necessarily as small as it was originally, but reduce to a *reasonable* size).
+- Incorporate C# code into the database.
+  - Conditions/checks are implemented in C#.
+  - Use code generation to provide strongly-typed APIs and also hooks for arbitrary checks.
+  - Note: new code checks are not automatically run on existing data.
 
 ## Non-Goals
 
@@ -24,6 +30,9 @@ ArcDb is intended to be embedded within a .NET application. While you *could* em
   - ArcDb will expose an API based on relational algebra; SQL is a form of relational calculus. The two are equivalent in terms of expressive power.
 - Relaxing isolation. Only Serializable transactions are supported; Repeatable Read, Read Committed, and Read Uncommitted are not supported.
 - Relaxing durability. E.g., choosing to flush to disk less often than is required for full durability.
+- `NULL`. It constantly causes surprising behavior.
+  - Operations such as outer joins will require a user-supplied "null object value".
+  - TODO: Figure out how to represent self-referencing tables (e.g., `Employee.Boss` for the CEO record).
 
 ## Terminology
 
@@ -51,7 +60,7 @@ See the docs folder for details. To summarize:
 - Result: Read Transactions may run concurrently with other Read Transactions or Write Transactions.
 - Result: Write Transactions may run concurrently with Read Transactions, and block on other Write Transactions.
 - Result: Dirty Reads, Nonrepeatable Reads, Phantom Reads, Lost Updates, and Dirty Writes are not possible. Write Skew is possible; see below.
-- Result: Write Transactions are never aborted by the system; there's no "deadlock loser" or "aborted transaction". Transaction deadlocks are not possible. The only way a Write Transaction can unexpectedly fail is if the underlying storage disk fails.
+- Result: Write Transactions are never aborted by ArcDb; there's no "deadlock loser" or "aborted transaction". Transaction deadlocks are not possible. The only way a Write Transaction can unexpectedly fail is if the underlying storage disk fails.
 - Recommendations for transactions that read and then write:
   - If it is sufficiently performant, combine both the read and write into a single Write Transaction.
   - Otherwise, you will have to do a Read Transaction followed by a Write Transaction.
@@ -79,3 +88,10 @@ Side effects:
 This is similar to copy-on-write implementations, but with ArcDb the copies always go into the WAL instead of the Main database file. It's also similar to multicomponent LSM trees and how they depend on compaction, but ArcDb uses B-trees instead of LSM trees; ArcDb does use WAL-scoped bloom filters in the same way as LSMs.
 
 Using copy-on-write B-trees with WALs while insisting on full transaction isolation has an interesing result: ArcDb completely fails the RUM conjecture. Mutable B-Trees optimize for reads; immutable LSMs optimize for writes; and relaxing isolation optimizes for memory. ArcDb optimizes for none of these. As such, it *may* be useful as a performance baseline for database systems that do optimize for one of those concerns.
+
+## Limitations
+
+- Folio/Page size is 8 KB (8192 bytes).
+- Folio Offsets (FO) are 32-bit numbers that are folio-sized. This results in a maximum Database size of 4294967296 * 8192 = 35184372088832 bytes, or 32 TB.
+  - This is an acceptable limitation for an embedded relational database.
+  - The actual amount of user data stored will be less, due to metadata and relational structure overheads.
