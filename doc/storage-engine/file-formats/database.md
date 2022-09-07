@@ -45,7 +45,6 @@ This map is updated when moving a logical page from one folio to another.
 This is a [B-Tree](./trees.md) that maps Folio offsets (used data pages) to Logical Page Numbers.
 
 This map is read when doing garbage collection or metadata expansion.
-- TODO: if we took more of the data header, we wouldn't need this for metadata expansion; can it be done away with completely?
 
 This map is appended to when allocating a data page, and removed from when deallocating a data page.
 
