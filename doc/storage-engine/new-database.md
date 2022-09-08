@@ -8,4 +8,4 @@ In this case, ArcDb performs a maintenance [Write Transaction](./transactions.md
 
 ## The Bootstrap Transaction
 
-ArcDb will create 4 new folios, all of which are metadata: one header, plus one root node each for LPN-FO, FO-LPN, and FFO. There are no data pages and no metadata freelist pages in a newly-created database.
+ArcDb will create 8 new folios, all of which are metadata: one header, plus one root node each for LPN-FO, FO-LPN, FFO, and FLPN, plus 3 freelist pages. There are no data pages in a newly-created database.

@@ -1,6 +1,6 @@
 # B-Trees
 
-The metadata B-tree structures are slightly different in their details (e.g., FFO has no values). But in general they follow these guidelines.
+The metadata B-tree structures are slightly different in their details (e.g., FFO and FLPN have no values). But in general they follow these guidelines.
 
 ## Node Header
 

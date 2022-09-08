@@ -24,9 +24,11 @@ The database header folio includes these fields:
   - The root node of the [LPN-FO map](#lpn-fo-logical-page-number---folio-offset).
   - The root node of the [FO-LPN map](#fo-lpn-folio-offset---logical-page-number).
   - The root node of the [FFO set](#ffo-free-folio-offsets).
+  - The root node of the [FLPN set](#flpn-free-logical-page-numbers).
 - The metadata folio number of the first entry in the [metadata freelist](#freelist).
 - The total number of entries in the FFO set.
 - The total number of folios in the Database.
+- The largest allocated LPN, or `0` if none.
 
 ## Metadata Structures
 
@@ -57,6 +59,14 @@ This is a [B-Tree](./trees.md) without values; it is just a set of Folio offsets
 This set is read when searching for a free page or when doing garbage collection.
 
 This set is appended to when deallocating a data page, and removed from when allocating a data page.
+
+### FLPN (Free Logical Page Numbers)
+
+This is a [B-Tree](./trees.md) without values; it is just a set of Logical Page Numbers that are unused.
+
+This set is read when allocating a LPN. It does not participate in garbage collection.
+
+This set is appended to when deallocating a LPN, and removed from when allocating a LPN.
 
 ### Freelist
 

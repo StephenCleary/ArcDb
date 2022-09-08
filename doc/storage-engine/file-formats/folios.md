@@ -13,6 +13,7 @@ The types of Folio pages are:
 - (Metadata) LPN-FO Node
 - (Metadata) FO-LPN Node
 - (Metadata) FFO Node
+- (Metadata) FLPN Node
 - (Metadata) Freelist
 - (Data) Data Page
 - (Data) Free Page

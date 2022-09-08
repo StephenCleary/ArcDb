@@ -19,6 +19,6 @@ To expand the Metadata section, ArcDb follows these steps:
    - If a folio is already in the WAL, it just needs its offset updated.
    - Optimization: ignore folios if they are free pages, and adjust the allocation so they are not included.
 3. Extend the metadata size. Add all new pages to the [metadata freelist](./file-formats/database.md#freelist).
-4. Update the metadata structures ([LPN-FO](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset), [FO-LPN](./file-formats/database.md#fo-lpn-folio-offset---logical-page-number), and [FFO](./file-formats/database.md#ffo-free-folio-offsets)) with the new offsets for those pages.
+4. Update the metadata structures ([LPN-FO](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset), [FO-LPN](./file-formats/database.md#fo-lpn-folio-offset---logical-page-number), and [FFO](./file-formats/database.md#ffo-free-folio-offsets)) with the new offsets for those pages. FLPN does not need to change.
 
 Finally, the original metadata operation (that was unable to allocate the metadata folio) is retried.
