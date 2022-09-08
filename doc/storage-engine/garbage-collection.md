@@ -8,7 +8,7 @@ The GC is a maintenance process that is always running, and will occasionally is
 
 ## GC Trigger
 
-The [database header](./file-formats/database.md#database-header) tracks the number of free pages (the size of the FP set) and the total numer of folios in the Database. After the last [WAL](./file-formats/wal.md) is [Merged](./lazy-writer.md#merging-wal-files), the GC process checks whether a GC would be useful (e.g., database size could be reduced by 20% or more). If there are no Write Transactions waiting, the GC kicks off a GC Write Transaction.
+The [database header](./file-formats/database.md#database-header) tracks the number of free pages (the size of the FFO set) and the total numer of folios in the Database. After the last [WAL](./file-formats/wal.md) is [Merged](./lazy-writer.md#merging-wal-files), the GC process checks whether a GC would be useful (e.g., database size could be reduced by 20% or more). If there are no Write Transactions waiting, the GC kicks off a GC Write Transaction.
 
 ## GC as a Write Transaction
 
@@ -16,7 +16,7 @@ The GC is a normal [Write Transaction](./transactions.md) that updates the Datab
 
 The GC work should be limited to a reasonable number; never issue a "full GC". Each GC can only move some threshold of pages (though it can free more if they happen to already be at the end of the Database). Rationale: GC Write Transactions will block User Write Transactions.
 
-The GC can move data pages from maximum FO (using the FO-LPN map) to minimum free pages (FP). Then trim to the new maximum FO.
+The GC can move data pages from maximum FO (using the FO-LPN map) to minimum free pages (FFO). Then trim to the new maximum FO.
 
 The GC can also just be a "quick trim" (without moving pages) if there are sufficient free data pages already at the end of the data extent. Note that this does update the database header folio with the new total number of folios, so the Write Transaction is not actually empty.
 

@@ -49,7 +49,7 @@ The Write Transaction object exposes these APIs, in addition to all the APIs on 
 
 Allocate Page:
 - Determine the LPN; either increment largest (if 64-bit) or perform a find-unused search in the LPN-FO mapping (if 32-bit).
-- Remove the first entry in the FP set. This is a Folio Offset (FO).
+- Remove the first entry in the FFO set. This is a Folio Offset (FO).
   - If there are no entries, then use a new FO appended to the file.
 - Add to the LPN-FO and FO-LPN maps.
 - Return the LPN.
@@ -57,7 +57,7 @@ Allocate Page:
 Free Page:
 - Remove the LPN from the LPN-FO map, saving the FO.
 - Remove the FO from the FO-LPN map.
-- Add the FO to the FP set.
+- Add the FO to the FFO set.
 
 # Logical Page Numbers (LPNs)
 
