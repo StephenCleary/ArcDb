@@ -48,20 +48,20 @@ The Write Transaction object exposes these APIs, in addition to all the APIs on 
 ### Implementations
 
 Allocate Page:
-- Allocate an LPN; if the FLPN set has any entries, then remove the smallest one and use that value; otherwise, increment the largest allocated LPN in the database header and use that value.
-- Remove the first entry in the FFO set. This is a Folio Offset (FO).
+- Allocate an LPN; if the [FLPN set](./file-formats/database.md#flpn-free-logical-page-numbers) has any entries, then remove the smallest one and use that value; otherwise, increment the largest allocated LPN in the [database header](./file-formats/database.md#database-header) and use that value.
+- Remove the first entry in the [FFO set](./file-formats/database.md#ffo-free-folio-offsets). This is a Folio Offset (FO).
   - If there are no entries, then use a new FO appended to the file.
     - If the FO value is too large, then throw a TooMuchData exception.
-- Add to the LPN-FO and FO-LPN maps.
+- Add to the [LPN-FO](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset) and [FO-LPN](./file-formats/database.md#fo-lpn-folio-offset---logical-page-number) maps.
 - Return the LPN.
 
 Free Page:
-- Remove the LPN from the LPN-FO map, saving the FO.
-- Remove the FO from the FO-LPN map.
-- Add the FO to the FFO set.
-- If the LPN is the largest allocated LPN in the database header, then perform an LPN Trim; otherwise, add it to the FLPN set.
-  - LPN Trim: Remove all consecutive highest values from the FLPN, and set the largest allocated LPN in the database header to the smallest of these.
-    - Optimization: The smallest LPN in the trimmed values is also the largest LPN remaining in the LPN-FO map.
+- Remove the LPN from the [LPN-FO](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset) map, saving the FO.
+- Remove the FO from the [FO-LPN](./file-formats/database.md#fo-lpn-folio-offset---logical-page-number) map.
+- Add the FO to the [FFO set](./file-formats/database.md#ffo-free-folio-offsets).
+- If the LPN is the largest allocated LPN in the [database header](./file-formats/database.md#database-header), then perform an LPN Trim; otherwise, add it to the [FLPN set](./file-formats/database.md#flpn-free-logical-page-numbers).
+  - LPN Trim: Remove all consecutive highest values from the [FLPN](./file-formats/database.md#flpn-free-logical-page-numbers), and set the largest allocated LPN in the database header to the smallest of these.
+    - Optimization: The smallest LPN in the trimmed values is also the largest LPN remaining in the [LPN-FO map](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset).
 
 # Logical Page Numbers (LPNs)
 
@@ -69,7 +69,7 @@ The Storage Engine API always accesses pages in terms of Logical Page Numbers. T
 
 Nothing above the Storage Engine has any concept of Folios or metadata (except the reserved section in the database header). However, the Backup and Validate operations do operate on Folios.
 
-LPNs are 32-bit unsigned integers, with `0` as an invalid LPN value.
+LPNs are 32-bit (4-byte) unsigned integers, with `0` as an invalid LPN value.
 
 # Fail-Fast
 

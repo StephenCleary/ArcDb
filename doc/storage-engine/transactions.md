@@ -10,7 +10,7 @@ Write Transactions begin and eventually commit or rollback.
 
 Each Transaction Version identifies a fully consistent state of the database.
 
-A Transaction Version is an unsigned 64-bit integer. This is sufficient for a sustained 1 billion write transactions per second for more than 500 years. ArcDb treats this as an infinite supply of monotonically increasing values.
+A Transaction Version is an unsigned 64-bit (8-byte) integer. This is sufficient for a sustained 1 billion write transactions per second for more than 500 years. ArcDb treats this as an infinite supply of monotonically increasing values.
 
 The current version of the database is the Database Version. This exists on-disk and in-memory. It is equal to the most-recently-committed Write Transaction Version.
 

@@ -107,7 +107,7 @@ Using copy-on-write B-trees with WALs while insisting on full transaction isolat
 ## Limitations
 
 - Folio/Page size is 8 KB (8192 bytes).
-- Folio Offsets (FO) are 32-bit numbers that are folio-sized. This results in a maximum Database size of 4294967296 * 8192 = 35184372088832 bytes, or 32 TB.
+- Folio Offsets (FO) are 32-bit (4-byte) numbers that are folio-sized. This results in a maximum Database size of 4294967296 * 8192 = 35184372088832 bytes, or 32 TB.
   - This is an acceptable limitation for an embedded relational database.
   - The actual amount of user data stored will be less, due to metadata and relational structure overheads.
 
