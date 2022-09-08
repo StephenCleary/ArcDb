@@ -13,9 +13,7 @@ A given storage engine provides these APIs as the entry point to its services:
 - OpenOrCreate Database: Returns a read/write database object.
 - Open ReadOnly Database: Returns a read-only database object.
 
-The database is closed when it is disposed.
-
-TODO: Determine if we want to allow maintenance transactions to complete if closed asynchronously, e.g., GC. This would make asynchronous disposal work differently than synchronous disposal, though.
+The database is closed when it is disposed. Any in-progress maintenance transactions (e.g., GC) are rolled back.
 
 ## Read-Only Database APIs
 
@@ -41,11 +39,25 @@ The Read Transaction object exposes these APIs:
 The Write Transaction object exposes these APIs, in addition to all the APIs on the Read Transaction object:
 
 - Write Database Header: Writes the reserved header section.
-- Allocate Page: Allocates a new Data Page, returning the new Logical Page Number.
-- Free Page: Deallocates the specified Data Page.
+- Allocate Page(s): Allocates a new Data Page, returning the new Logical Page Number.
+- Free Page(s): Deallocates the specified Data Page.
 - Write Page: Writes data to a Data Page.
 
 ### Implementations
+
+Read Database Header:
+- Return the appropriate portion of LO `0`.
+
+Write Database Header:
+- Write the appropriate portion of LO `0`.
+
+Read Page:
+- Look up the LPN number in the [LPN-FO map](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset).
+- Return the data at that FO.
+
+Write Page:
+- Look up the LPN number in the [LPN-FO map](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset).
+- Update the data at that FO.
 
 Allocate Page:
 - Allocate an LPN; if the [FLPN set](./file-formats/database.md#flpn-free-logical-page-numbers) has any entries, then remove the smallest one and use that value; otherwise, increment the largest allocated LPN in the [database header](./file-formats/database.md#database-header) and use that value.
@@ -55,6 +67,9 @@ Allocate Page:
 - Add to the [LPN-FO](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset) and [FO-LPN](./file-formats/database.md#fo-lpn-folio-offset---logical-page-number) maps.
 - Return the LPN.
 
+Allocate Pages:
+- A bulk operation of the above.
+
 Free Page:
 - Remove the LPN from the [LPN-FO](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset) map, saving the FO.
 - Remove the FO from the [FO-LPN](./file-formats/database.md#fo-lpn-folio-offset---logical-page-number) map.
@@ -62,6 +77,9 @@ Free Page:
 - If the LPN is the largest allocated LPN in the [database header](./file-formats/database.md#database-header), then perform an LPN Trim; otherwise, add it to the [FLPN set](./file-formats/database.md#flpn-free-logical-page-numbers).
   - LPN Trim: Remove all consecutive highest values from the [FLPN](./file-formats/database.md#flpn-free-logical-page-numbers), and set the largest allocated LPN in the database header to the smallest of these.
     - Optimization: The smallest LPN in the trimmed values is also the largest LPN remaining in the [LPN-FO map](./file-formats/database.md#lpn-fo-logical-page-number---folio-offset).
+
+Free Pages:
+- A bulk operation of the above.
 
 # Logical Page Numbers (LPNs)
 
