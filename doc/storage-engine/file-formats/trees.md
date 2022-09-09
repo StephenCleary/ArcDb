@@ -23,8 +23,6 @@ Note: metadata trees do not support bulk loading optimizations (e.g., creating a
 
 ## Defragmentation
 
-B-Trees on HDDs benefit from defragmenting their nodes; nodes should be ordered according to height and that order should be reflected in absolute file offsets.
-
-However, tree defragmentation should *not* be turned on for SSD drives, which receive very little benefit at the cost of SSD lifetime. ArcDb by default has tree defragmentation turned off. TODO: allow the users to turn it on? It does seem like a lot of moving data around for relatively little benefit, even for HDDs.
+ArcDb does not perform tree defragmentation. It should not be turned on for SSD drives and does not benefit many access patterns; it only provides benefits when doing scans on HDDs.
 
 Note: defragmentation *within* each node is always on.

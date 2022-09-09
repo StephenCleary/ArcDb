@@ -6,7 +6,7 @@ Different kinds of validation are done at different times.
 
 [Folio hashes](./file-formats/folios.md) are validated each time data is read from disk (or *may* have been read from disk).
 
-TODO: We can add folio type validation here, too, if we store it.
+Folio types are also validated on reads.
 
 ## Backup Validation
 
@@ -14,9 +14,8 @@ The [metadata tree structures](./file-formats/database.md#metadata-structures) a
 
 TODO: B-tree height is also validated.
 TODO: B-trees should all have fence keys to allow the one-pass algorithm to work completely.
-TODO: B-trees may also have DLL pointers, which also will need validation.
 
 ## Full Validation
 
 A Validate operation (full validation) performs an entire read of every folio in the database, and may need to read them multiple times. It includes all the validation performed by Continuous Validation and Backup Validation, and also validates:
-- TODO: The page type of each page referenced by a metadata structure.
+- TODO: Figure out if there's any other validation that can be done, or whether this is just a Backup without a destination.
