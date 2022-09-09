@@ -25,3 +25,6 @@ The footer contains the number of database folios in the WAL file. It also conta
 If the TOC fits within the footer, then the footer contains the TOC, and there are no other metadata folios.
 
 If the TOC is large enough to require its own folio(s), then the footer contains a bloom filter. Footer folios for all WALs are always in memory, so this provides a quick check when looking up folio offsets for data pages (or other folios). Note that for very large WALs, the bloom filter loses its effectiveness, since it has a hard size limit (fitting in the footer).
+
+TODO: Consider multiple bloom filters if the effectiveness drops below a certain threshold.
+Implementation note: Reducing the range of random values is trickier than it first appears. Non-powers-of-2 bloom filters will require a slower algorithm.

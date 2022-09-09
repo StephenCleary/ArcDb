@@ -60,6 +60,8 @@ Once the transaction has been committed to disk, it is committed to memory:
 
 The Write Transaction is considered complete when the WAL footer has been flushed (and the in-memory commits are made). It does not have to wait for the [Lazy Writer](./lazy-writer.md) to merge the WAL into the Main database file.
 
+Optimization: Write Transactions keep an in-memory list of metadata and LPN folios freed by this transaction; allocations come from these in-memory freelists. If freelists still have entries when the transaction is committed, then the metadata structures are updated as needed in bulk at that time.
+
 ### Notes
 
 Database Versions are unique only if you only consider committed transactions. They may be equal to previous Write Transaction Versions that were rolled back, or equal to a Read Transaction's Version.
