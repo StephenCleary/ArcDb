@@ -21,3 +21,9 @@ When the page is returned to the Write Cache, the Cache Manager may issue an eag
 ## File Access
 
 All APIs used are asynchronous, but may run synchronously. This is because the Windows cache manager only has a certain number of dedicated threads, and it uses (synchronous) page faults to read data from disk. Other APIs only have synchronous versions (looking at you, `FlushFileBuffers`). And other APIs always run synchronously in some situations even if there are sufficient threads (e.g., writes that extend the file length). TODO: Consider running *all* our file APIs through `Task.Run`.
+
+TODO: Fix-Use-Unfix protocol:
+- Fix: Ensure page is loaded.
+- Use: Obtain direct-access pointer.
+- Unfix: Allow page to be unloaded.
+(Buffer manager flushes as necessary)
