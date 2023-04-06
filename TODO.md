@@ -1,0 +1,2 @@
+- Support for encryption?
+- Can we store IL for stored procedures / constraints?
