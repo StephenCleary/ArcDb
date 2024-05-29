@@ -12,7 +12,7 @@ If any WAL file *except* the last WAL file (the highest Version) is invalid, the
 
 If the *last* WAL file (the highest Version) is invalid, then that WAL file represents a Write Transaction that was aborted. If the database was opened in read-only mode, that WAL file is ignored; otherwise, it is deleted. Note that this check is done *after* the check for other invalid WAL files, so if there are multiple invalid WAL files, ArcDb properly interprets that as corruption and not multiple aborted transactions if the database is opened repeatedly.
 
-If the steps above are complete and there are no WAL files and the Main database file is zero bytes, then the initial database creation WAL has failed, and [special steps](./startup.md) are taken to bootstrap the new database.
+If the last WAL file is also the only WAL file and also has Version 0 (as determined by the WAL file name, not the data in the file), then the initial database creation WAL has failed, and [special steps](./startup.md) are taken to bootstrap the new database.
 
 ## Lazy Writer
 
